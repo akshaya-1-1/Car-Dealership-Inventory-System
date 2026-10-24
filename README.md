@@ -226,19 +226,22 @@ Coverage percentages should be added only after running the coverage command.
 
 ## Screenshots
 
-Add screenshots of the actual running application to demonstrate its interface and functionality.
 
-Suggested screenshots:
+### Login Page
+![Login Page](docs/screenshots/login.png)
 
-- Application home or vehicle listing page
-- Vehicle search and filtering
-- Login or registration page
-- Vehicle details and purchase workflow
-- Administrator inventory management
-- Swagger API documentation
-- Successful automated test results
+### Customer Showroom
+![Customer Showroom](docs/screenshots/customer_showroom.png)
 
-Replace this section with embedded screenshots once you have added the actual image files to the repository.
+### Admin Dashboard
+![Admin Dashboard](docs/screenshots/admin_dashboard.png)
+
+### Admin Vehicle Management
+![Admin Vehicle Management](docs/screenshots/admin_vehicle_management.png)
+
+### Search and Filters
+![Search and Filters](docs/screenshots/search-filter.png)
+
 
 Example:
 
@@ -277,6 +280,3 @@ Relevant commits should include any required AI co-author trailers specified by 
 - Restrict administrative operations to authorized users.
 - Use a production-appropriate configuration before deploying the application.
 
-## License
-
-Add a license here if the project is distributed under a specific open-source license.

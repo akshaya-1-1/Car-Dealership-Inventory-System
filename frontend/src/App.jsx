@@ -474,216 +474,382 @@ export default function App() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-7xl px-4 py-8">
-        <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+      
+        <main className="mx-auto max-w-7xl px-4 py-8">
+  {admin ? (
+    /* ADMIN DASHBOARD */
+    <div className="space-y-8">
+      <section className="rounded-3xl bg-slate-950 p-6 text-white sm:p-9">
+        <div className="flex flex-wrap items-center justify-between gap-5">
           <div>
-            <p className="mb-2 text-xs font-bold uppercase tracking-widest text-orange-600">
-              Dealership overview
-            </p>
+            <div className="mb-3 flex items-center gap-2 text-sm font-bold text-orange-400">
+              <ShieldCheck size={18} />
+              ADMINISTRATION CONSOLE
+            </div>
 
             <h1 className="text-3xl font-black sm:text-4xl">
-              Inventory at a glance.
+              Inventory Control
             </h1>
 
-            <p className="mt-2 text-sm text-slate-500">
-              Find vehicles and keep stock up to date.
+            <p className="mt-3 max-w-xl text-sm leading-6 text-slate-300">
+              Manage dealership vehicles, monitor stock levels,
+              and keep your inventory up to date.
             </p>
           </div>
 
-          {admin && (
-            <button className="btn" onClick={() => open()}>
-              <Plus size={17} />
-              Add vehicle
-            </button>
-          )}
+          <button className="btn" onClick={() => open()}>
+            <Plus size={18} />
+            Add New Vehicle
+          </button>
+        </div>
+      </section>
+
+      <section>
+        <div className="mb-4">
+          <h2 className="text-xl font-black">Inventory Overview</h2>
+          <p className="mt-1 text-sm text-slate-500">
+            Summary of the vehicles returned by your current inventory filters.
+          </p>
         </div>
 
-        <div className="mb-7 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 xl:grid-cols-4">
           {[
-            ['Vehicle models', vehicles.length],
-            ['Units in stock', stats.units],
-            ['Stock value', money(stats.value)],
-            ['Out of stock', stats.out]
-          ].map(([label, value]) => (
-            <div
-              className="rounded-2xl border bg-white p-5"
-              key={label}
-            >
-              <div className="mb-4 flex gap-2 text-xs font-semibold text-slate-500">
-                <Boxes size={17} />
-                {label}
-              </div>
+            {
+              label: "Vehicle Models",
+              value: vehicles.length,
+              icon: CarFront,
+              color: "text-blue-600",
+              bg: "bg-blue-50",
+            },
+            {
+              label: "Units in Stock",
+              value: stats.units,
+              icon: Boxes,
+              color: "text-emerald-600",
+              bg: "bg-emerald-50",
+            },
+            {
+              label: "Inventory Value",
+              value: money(stats.value),
+              icon: CheckCircle2,
+              color: "text-orange-600",
+              bg: "bg-orange-50",
+            },
+            {
+              label: "Out of Stock",
+              value: stats.out,
+              icon: AlertCircle,
+              color: "text-rose-600",
+              bg: "bg-rose-50",
+            },
+          ].map((item) => {
+            const Icon = item.icon;
 
-              <p className="text-2xl font-black">{value}</p>
-            </div>
-          ))}
+            return (
+              <div
+                key={item.label}
+                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+              >
+                <div
+                  className={`mb-5 grid h-11 w-11 place-items-center rounded-xl ${item.bg} ${item.color}`}
+                >
+                  <Icon size={21} />
+                </div>
+
+                <p className="text-sm font-medium text-slate-500">
+                  {item.label}
+                </p>
+
+                <p className="mt-2 break-words text-2xl font-black text-slate-900">
+                  {item.value}
+                </p>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-slate-200 p-5 sm:p-6">
+          <div>
+            <h2 className="text-xl font-black">Vehicle Management</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Search, update, restock, or remove vehicles.
+            </p>
+          </div>
+
+          <button className="secondary" onClick={load}>
+            <RefreshCw size={16} />
+            Refresh
+          </button>
         </div>
 
-        <section className="rounded-3xl border bg-white p-4 sm:p-6">
-          <div className="mb-5 flex items-center justify-between">
-            <div>
-              <h2 className="text-lg font-black">
-                Showroom inventory
-              </h2>
+        <div className="grid gap-3 border-b border-slate-200 bg-slate-50 p-5 md:grid-cols-[1fr_190px_170px]">
+          <label className="relative">
+            <Search
+              size={17}
+              className="absolute left-3 top-3.5 text-slate-400"
+            />
+            <input
+              className="field pl-9"
+              placeholder="Search make or model..."
+              value={q}
+              onChange={(e) => setQ(e.target.value)}
+            />
+          </label>
 
-              <p className="text-sm text-slate-500">
-                {vehicles.length} listings
-              </p>
-            </div>
+          <select
+            className="field"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="All">All categories</option>
+            {[...new Set(vehicles.map((v) => v.category))].map((c) => (
+              <option key={c} value={c}>
+                {c}
+              </option>
+            ))}
+          </select>
 
-            <button className="secondary" onClick={load}>
-              <RefreshCw size={15} />
-              Refresh
-            </button>
-          </div>
+          <select
+            className="field"
+            value={stock}
+            onChange={(e) => setStock(e.target.value)}
+          >
+            <option value="all">All stock statuses</option>
+            <option value="in">In stock</option>
+            <option value="out">Out of stock</option>
+          </select>
+        </div>
 
-          <div className="mb-6 grid gap-3 md:grid-cols-[1fr_190px_170px]">
-            <label className="relative">
-              <Search
-                size={17}
-                className="absolute left-3 top-3.5 text-slate-400"
-              />
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[850px] text-left text-sm">
+            <thead className="bg-white text-xs uppercase tracking-wider text-slate-500">
+              <tr>
+                <th className="px-5 py-4 font-bold">Vehicle</th>
+                <th className="px-5 py-4 font-bold">Category</th>
+                <th className="px-5 py-4 font-bold">Price</th>
+                <th className="px-5 py-4 font-bold">Quantity</th>
+                <th className="px-5 py-4 font-bold">Status</th>
+                <th className="px-5 py-4 text-right font-bold">Actions</th>
+              </tr>
+            </thead>
 
-              <input
-                className="field pl-9"
-                placeholder="Search make or model…"
-                value={q}
-                onChange={e => setQ(e.target.value)}
-              />
-            </label>
+            <tbody className="divide-y divide-slate-100">
+              {vehicles.map((v) => (
+                <tr key={v.id} className="transition hover:bg-slate-50">
+                  <td className="px-5 py-4">
+                    <div className="flex items-center gap-3">
+                      <div className="grid h-11 w-11 shrink-0 place-items-center rounded-xl bg-orange-50 text-orange-600">
+                        <CarFront size={23} />
+                      </div>
 
-            {/* FIXED: Keep all category choices available */}
-            <label className="relative">
-              <SlidersHorizontal
-                size={15}
-                className="absolute left-3 top-3.5 text-slate-400"
-              />
+                      <div>
+                        <p className="font-bold text-slate-900">
+                          {v.make} {v.model}
+                        </p>
+                        <p className="mt-1 text-xs text-slate-500">
+                          Inventory ID #{v.id}
+                        </p>
+                      </div>
+                    </div>
+                  </td>
 
-              <select
-                className="field pl-9"
-                value={category}
-                onChange={e => setCategory(e.target.value)}
-              >
-                <option value="All">All Categories</option>
+                  <td className="px-5 py-4 text-slate-600">
+                    {v.category}
+                  </td>
 
-                {categories.map(item => (
-                  <option key={item} value={item}>
-                    {item}
-                  </option>
-                ))}
-              </select>
-            </label>
+                  <td className="px-5 py-4 font-bold text-slate-900">
+                    {money(v.price)}
+                  </td>
 
-            <select
-              className="field"
-              value={stock}
-              onChange={e => setStock(e.target.value)}
-            >
-              <option value="all">All stock status</option>
-              <option value="in">In stock</option>
-              <option value="out">Out of stock</option>
-            </select>
-          </div>
+                  <td className="px-5 py-4 font-semibold">
+                    {v.quantity}
+                  </td>
 
-          {!vehicles.length ? (
-            <div className="rounded-2xl border border-dashed p-12 text-center text-slate-500">
-              <Search className="mx-auto mb-3" />
-
-              <b>No vehicles found</b>
-
-              <p className="text-sm">
-                Try another search or filter.
-              </p>
-            </div>
-          ) : (
-            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
-              {vehicles.map(vehicle => (
-                <article
-                  key={vehicle.id}
-                  className="overflow-hidden rounded-2xl border hover:shadow-lg"
-                >
-                  <div className="relative grid h-32 place-items-center bg-gradient-to-br from-orange-100 to-slate-100">
-                    <CarFront size={84} strokeWidth={1.1} />
-
-                    <span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 text-xs font-bold">
-                      {vehicle.category}
-                    </span>
-
+                  <td className="px-5 py-4">
                     <span
-                      className={`absolute right-3 top-3 rounded-full px-3 py-1 text-xs font-bold ${
-                        vehicle.quantity
-                          ? 'bg-emerald-100 text-emerald-700'
-                          : 'bg-rose-100 text-rose-700'
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${
+                        v.quantity > 0
+                          ? "bg-emerald-50 text-emerald-700"
+                          : "bg-rose-50 text-rose-700"
                       }`}
                     >
-                      {vehicle.quantity
-                        ? `${vehicle.quantity} available`
-                        : 'Out of stock'}
+                      {v.quantity > 0 ? "In Stock" : "Out of Stock"}
                     </span>
-                  </div>
+                  </td>
 
-                  <div className="p-4">
-                    <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
-                      {vehicle.make}
-                    </p>
-
-                    <div className="mt-1 flex justify-between gap-2">
-                      <h3 className="text-lg font-black">
-                        {vehicle.model}
-                      </h3>
-
-                      <b>{money(vehicle.price)}</b>
-                    </div>
-
-                    <p className="my-4 border-t pt-3 text-xs text-slate-500">
-                      Inventory ID #{vehicle.id} · {vehicle.quantity} units
-                    </p>
-
-                    {admin ? (
-                      <div className="flex gap-2">
-                        <button
-                          className="secondary flex-1"
-                          onClick={() => restock(vehicle)}
-                        >
-                          <Plus size={15} />
-                          Stock
-                        </button>
-
-                        <button
-                          className="secondary flex-1"
-                          onClick={() => open(vehicle)}
-                        >
-                          <Pencil size={15} />
-                          Edit
-                        </button>
-
-                        <button
-                          className="secondary"
-                          aria-label="Delete vehicle"
-                          onClick={() => remove(vehicle)}
-                        >
-                          <Trash2 size={15} />
-                        </button>
-                      </div>
-                    ) : (
+                  <td className="px-5 py-4">
+                    <div className="flex justify-end gap-2">
                       <button
-                        disabled={!vehicle.quantity}
-                        className="btn w-full"
-                        onClick={() => buy(vehicle)}
+                        type="button"
+                        className="secondary"
+                        title="Restock vehicle"
+                        onClick={() => restock(v)}
                       >
-                        {vehicle.quantity
-                          ? 'Purchase vehicle'
-                          : 'Currently unavailable'}
-
-                        <ArrowRight size={16} />
+                        <Plus size={15} />
+                        Restock
                       </button>
-                    )}
-                  </div>
-                </article>
+
+                      <button
+                        type="button"
+                        className="secondary"
+                        title="Edit vehicle"
+                        onClick={() => open(v)}
+                      >
+                        <Pencil size={15} />
+                      </button>
+
+                      <button
+                        type="button"
+                        className="secondary text-rose-600"
+                        title="Delete vehicle"
+                        onClick={() => remove(v)}
+                      >
+                        <Trash2 size={15} />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
               ))}
+            </tbody>
+          </table>
+
+          {vehicles.length === 0 && (
+            <div className="p-12 text-center">
+              <CarFront className="mx-auto mb-3 text-slate-400" size={36} />
+              <p className="font-bold text-slate-700">No vehicles found</p>
+              <p className="mt-1 text-sm text-slate-500">
+                Try changing your search or filters.
+              </p>
             </div>
           )}
-        </section>
+        </div>
+
+        <div className="border-t border-slate-200 bg-slate-50 px-5 py-4 text-sm text-slate-500">
+          Showing {vehicles.length} vehicle records
+        </div>
+      </section>
+    </div>
+  ) : (
+    /* CUSTOMER SHOWROOM */
+    <div>
+      <div className="mb-7 flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="mb-2 text-xs font-bold uppercase tracking-widest text-orange-600">
+            Explore our collection
+          </p>
+          <h1 className="text-3xl font-black sm:text-4xl">
+            Find your next car.
+          </h1>
+          <p className="mt-2 text-sm text-slate-500">
+            Browse available vehicles and purchase directly.
+          </p>
+        </div>
+      </div>
+
+      <div className="mb-6 grid gap-3 md:grid-cols-[1fr_190px_170px]">
+        <label className="relative">
+          <Search
+            size={17}
+            className="absolute left-3 top-3.5 text-slate-400"
+          />
+          <input
+            className="field pl-9"
+            placeholder="Search make or model..."
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+          />
+        </label>
+
+        <select
+          className="field"
+          value={category}
+          onChange={(e) => setCategory(e.target.value)}
+        >
+          <option value="All">All categories</option>
+          {[...new Set(vehicles.map((v) => v.category))].map((c) => (
+            <option key={c} value={c}>
+              {c}
+            </option>
+          ))}
+        </select>
+
+        <select
+          className="field"
+          value={stock}
+          onChange={(e) => setStock(e.target.value)}
+        >
+          <option value="all">All vehicles</option>
+          <option value="in">In stock</option>
+          <option value="out">Out of stock</option>
+        </select>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+        {vehicles.map((v) => (
+          <article
+            key={v.id}
+            className="overflow-hidden rounded-2xl border bg-white transition hover:-translate-y-1 hover:shadow-lg"
+          >
+            <div className="relative grid h-32 place-items-center bg-gradient-to-br from-orange-100 to-slate-100">
+              <CarFront size={78} strokeWidth={1.2} />
+
+              <span className="absolute left-3 top-3 rounded-full bg-white px-3 py-1 text-xs font-bold">
+                {v.category}
+              </span>
+
+              <span
+                className={`absolute right-3 top-3 rounded-full px-3 py-1 text-xs font-bold ${
+                  v.quantity
+                    ? "bg-emerald-100 text-emerald-700"
+                    : "bg-rose-100 text-rose-700"
+                }`}
+              >
+                {v.quantity ? `${v.quantity} available` : "Out of stock"}
+              </span>
+            </div>
+
+            <div className="p-5">
+              <p className="text-xs font-bold uppercase tracking-widest text-slate-400">
+                {v.make}
+              </p>
+
+              <div className="mt-1 flex items-start justify-between gap-3">
+                <h2 className="text-xl font-black">{v.model}</h2>
+                <span className="font-black text-orange-600">
+                  {money(v.price)}
+                </span>
+              </div>
+
+              <p className="my-4 border-t pt-3 text-xs text-slate-500">
+                Vehicle ID #{v.id}
+              </p>
+
+              <button
+                type="button"
+                disabled={!v.quantity}
+                className="btn w-full disabled:cursor-not-allowed disabled:opacity-50"
+                onClick={() => buy(v)}
+              >
+                {v.quantity ? "Purchase Vehicle" : "Currently Unavailable"}
+                <ArrowRight size={16} />
+              </button>
+            </div>
+          </article>
+        ))}
+      </div>
+
+      {vehicles.length === 0 && (
+        <div className="rounded-2xl border border-dashed p-12 text-center text-slate-500">
+          <Search className="mx-auto mb-3" size={30} />
+          <p className="font-bold">No vehicles found</p>
+          <p className="mt-1 text-sm">Try another search or filter.</p>
+        </div>
+      )}
+    </div>
+  )}
+
 
         <footer className="flex justify-between py-6 text-xs text-slate-400">
           <span>© {new Date().getFullYear()} MotorHub</span>
