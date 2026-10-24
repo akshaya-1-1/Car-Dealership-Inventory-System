@@ -1,9 +1,9 @@
 from tests.conftest import auth
 def test_register_login_me_and_duplicate(client):
- r=client.post("/api/auth/register",json={"email":"a@example.com","full_name":"A User","password":"password123"})
+ r=client.post("/api/auth/register",json={"email":"a@example.com","full_name":"A User","password":"Password123!"})
  assert r.status_code==201 and r.json()["role"]=="customer" and "password_hash" not in r.json()
- assert client.post("/api/auth/register",json={"email":"a@example.com","full_name":"A","password":"password123"}).status_code==409
- t=client.post("/api/auth/login",json={"email":"a@example.com","password":"password123"}).json()["access_token"]
+ assert client.post("/api/auth/register",json={"email":"a@example.com","full_name":"A","password":"Password123!"}).status_code==409
+ t=client.post("/api/auth/login",json={"email":"a@example.com","password":"Password123!"}).json()["access_token"]
  assert client.get("/api/auth/me",headers=auth(t)).status_code==200
 def test_bad_login_and_auth_required(client,customer):
  assert client.post("/api/auth/login",json={"email":"customer@example.com","password":"wrongpass"}).status_code==401
@@ -32,3 +32,6 @@ def test_restock_admin_only(client,admin,customer,vehicle_payload):
  h=auth(admin["token"]); v=client.post("/api/vehicles",json=vehicle_payload,headers=h).json(); url=f"/api/vehicles/{v['id']}/restock"
  assert client.post(url,json={"quantity":2},headers=auth(customer["token"])).status_code==403
  assert client.post(url,json={"quantity":2},headers=h).json()["quantity"]==5
+
+
+

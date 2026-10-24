@@ -21,19 +21,21 @@ def client():
  app.dependency_overrides.clear(); Base.metadata.drop_all(engine); engine.dispose()
 @pytest.fixture
 def customer(client):
- r=client.post("/api/auth/register",json={"email":"customer@example.com","full_name":"Customer","password":"password123"}); assert r.status_code==201
- t=client.post("/api/auth/login",json={"email":"customer@example.com","password":"password123"}).json()["access_token"]
+ r=client.post("/api/auth/register",json={"email":"customer@example.com","full_name":"Customer","password":"Password123!"}); assert r.status_code==201
+ t=client.post("/api/auth/login",json={"email":"customer@example.com","password":"Password123!"}).json()["access_token"]
  return {"token":t,"id":r.json()["id"]}
 @pytest.fixture
 def admin(client):
- r=client.post("/api/auth/register",json={"email":"admin@example.com","full_name":"Admin","password":"password123"}); assert r.status_code==201
+ r=client.post("/api/auth/register",json={"email":"admin@example.com","full_name":"Admin","password":"Password123!"}); assert r.status_code==201
  gen=app.dependency_overrides[get_db](); db=next(gen)
  try: db.get(User,r.json()["id"]).role="admin"; db.commit()
  finally:
   try: next(gen)
   except StopIteration: pass
- t=client.post("/api/auth/login",json={"email":"admin@example.com","password":"password123"}).json()["access_token"]
+ t=client.post("/api/auth/login",json={"email":"admin@example.com","password":"Password123!"}).json()["access_token"]
  return {"token":t}
 @pytest.fixture
 def vehicle_payload(): return {"make":"Toyota","model":"Corolla","category":"Sedan","price":22000,"quantity":3}
 def auth(token): return {"Authorization":f"Bearer {token}"}
+
+
