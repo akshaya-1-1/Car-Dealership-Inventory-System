@@ -89,4 +89,6 @@ This file is a structured record of the principal prompts and development tasks.
 
 If raw, unedited conversation logs are explicitly required by the evaluator, this structured record should not be presented as a substitute for those logs.
 
-AI assistance was used as a development aid for planning, implementation guidance, debugging, testing, and documentation. The final implementation and test results should be verified before submission.
+## Transparency Note
+
+AI tools were used as development assistance for project planning, implementation guidance, debugging, testing, and documentation. The generated suggestions were reviewed and adapted during project development.
