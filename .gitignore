@@ -1,1 +1,11 @@
-__pycache__/\n*.py[cod]\n.venv/\n.env\n*.db\n.pytest_cache/\n.coverage\nhtmlcov/\nnode_modules/\ndist/\n
+__pycache__/\n*.py[cod]\n.venv/\n.env\n*.db\n.pytest_cache/\n.coverage\nhtmlcov/\nnode_modules/\ndist/\n# Ignore Python cache files
+__pycache__/
+*.py[cod]
+
+# Ignore local databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Ignore frontend dependencies
+node_modules/
